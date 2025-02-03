@@ -1,0 +1,27 @@
+server:
+  port: 8080
+  mode: debug  # debug or release
+
+mysql:
+  host: localhost
+  port: 3306
+  username: root
+  password: ""
+  dbname: gym
+  charset: utf8mb4
+  max_idle_conns: 10
+  max_open_conns: 100
+
+wechat:
+  app_id: "your_appid"
+  app_secret: "your_appsecret"
+
+jwt:
+  secret: your-secret-key
+  expire: 7200  # token expiration time in seconds
+
+redis:
+  host: localhost
+  port: 6379
+  password: ""
+  db: 0 
