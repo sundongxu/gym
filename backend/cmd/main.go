@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"gym/internal/handler"
+	"gym/internal/middleware"
 	"gym/pkg/config"
 	"gym/pkg/database"
 
@@ -36,6 +38,32 @@ func main() {
 
 	// 创建gin引擎
 	r := gin.Default()
+
+	// 创建处理器
+	loginHandler := handler.NewLoginHandler()
+	userHandler := handler.NewUserHandler()
+
+	// 注册路由
+	api := r.Group("/api/v1")
+	{
+		// 公开路由 - 登录相关
+		login := api.Group("/login")
+		{
+			login.POST("/wx-mini", loginHandler.WxMiniLogin) // 微信小程序登录
+			login.POST("/phone", loginHandler.PhoneLogin)    // 手机号密码登录
+			login.POST("/sms", loginHandler.SmsLogin)        // 短信验证码登录
+		}
+
+		// 需要认证的路由
+		auth := api.Group("/")
+		auth.Use(middleware.JWT())
+		{
+			// 用户相关
+			auth.GET("/user/profile", userHandler.GetProfile)       // 获取用户信息
+			auth.PUT("/user/profile", userHandler.UpdateProfile)    // 更新用户信息
+			auth.POST("/user/password", userHandler.ChangePassword) // 修改密码
+		}
+	}
 
 	// 注册基本健康检查路由
 	r.GET("/health", func(c *gin.Context) {

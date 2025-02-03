@@ -13,15 +13,15 @@ mysql:
   max_open_conns: 100
 
 wechat:
-  app_id: "your_appid"
-  app_secret: "your_appsecret"
+  app_id: "wx7f41b86a0bf03ed1"
+  app_secret: "10e2efc2ce19b303bc71a6afe0e457ef"
 
 jwt:
   secret: your-secret-key
-  expire: 7200  # token expiration time in seconds
+  expire: 30  # token expiration time in seconds
 
 redis:
   host: localhost
   port: 6379
   password: ""
-  db: 0 
+  db: 0

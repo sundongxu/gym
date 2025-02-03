@@ -17,6 +17,7 @@ func AutoMigrate() error {
 		&model.CourseEnrollment{},
 		&model.MembershipCard{},
 		&model.UserMembership{},
+		&model.UserAuth{},
 	)
 	return err
 }

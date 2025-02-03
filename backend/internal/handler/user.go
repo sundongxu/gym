@@ -2,7 +2,6 @@ package handler
 
 import (
 	"gym/internal/service"
-	"gym/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,11 +23,18 @@ func (h *UserHandler) GetProfile(c *gin.Context) {
 	userID := c.GetUint("user_id")
 	user, err := h.userService.GetUserByID(userID)
 	if err != nil {
-		utils.ResponseError(c, 1003, "获取用户信息失败")
+		c.JSON(500, gin.H{
+			"code":    1003,
+			"message": "获取用户信息失败",
+		})
 		return
 	}
 
-	utils.ResponseSuccess(c, user)
+	c.JSON(200, gin.H{
+		"code":    200,
+		"message": "获取成功",
+		"data":    user,
+	})
 }
 
 // UpdateProfile 更新用户信息
@@ -41,17 +47,26 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 
 	var req UpdateRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		utils.ResponseBadRequest(c, "参数错误")
+		c.JSON(400, gin.H{
+			"code":    400,
+			"message": "参数错误",
+		})
 		return
 	}
 
 	userID := c.GetUint("user_id")
 	if err := h.userService.UpdateUserProfile(userID, req.Nickname, req.Phone, req.Avatar); err != nil {
-		utils.ResponseError(c, 1004, "更新用户信息失败")
+		c.JSON(500, gin.H{
+			"code":    1004,
+			"message": "更新用户信息失败",
+		})
 		return
 	}
 
-	utils.ResponseSuccess(c, nil)
+	c.JSON(200, gin.H{
+		"code":    200,
+		"message": "更新成功",
+	})
 }
 
 // ChangePassword 修改密码
@@ -63,15 +78,24 @@ func (h *UserHandler) ChangePassword(c *gin.Context) {
 
 	var req ChangePasswordRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		utils.ResponseBadRequest(c, "参数错误")
+		c.JSON(400, gin.H{
+			"code":    400,
+			"message": "参数错误",
+		})
 		return
 	}
 
 	userID := c.GetUint("user_id")
 	if err := h.userService.ChangePassword(userID, req.OldPassword, req.NewPassword); err != nil {
-		utils.ResponseError(c, 1005, err.Error())
+		c.JSON(500, gin.H{
+			"code":    1005,
+			"message": err.Error(),
+		})
 		return
 	}
 
-	utils.ResponseSuccess(c, nil)
+	c.JSON(200, gin.H{
+		"code":    200,
+		"message": "修改成功",
+	})
 }

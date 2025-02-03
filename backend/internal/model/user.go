@@ -14,13 +14,13 @@ const (
 )
 
 // LoginType 登录类型
-type LoginType string
+type LoginType = string
 
 const (
-	LoginTypePassword  LoginType = "password"    // 密码登录
-	LoginTypePhone     LoginType = "phone"       // 手机验证码登录
-	LoginTypeWxMiniApp LoginType = "wx_mini_app" // 微信小程序登录
-	LoginTypeWxApp     LoginType = "wx_app"      // 微信APP登录
+	LoginTypePassword  = "password"    // 密码登录
+	LoginTypePhone     = "phone"       // 手机验证码登录
+	LoginTypeWxMiniApp = "wx_mini_app" // 微信小程序登录
+	LoginTypeWxApp     = "wx_app"      // 微信APP登录
 )
 
 // User 用户基本信息
@@ -41,11 +41,11 @@ type User struct {
 // UserAuth 用户授权信息
 type UserAuth struct {
 	ID         uint      `gorm:"primary_key" json:"id"`
-	UserID     uint      `gorm:"index" json:"user_id"`            // 关联用户ID
-	LoginType  LoginType `gorm:"size:16;index" json:"login_type"` // 登录类型
-	AuthKey    string    `gorm:"size:64;index" json:"auth_key"`   // 认证标识（手机号/openid）
-	AuthSecret string    `gorm:"size:255" json:"-"`               // 认证密钥（密码hash/验证码/session_key/token）
-	Extra      string    `gorm:"type:text" json:"-"`              // 额外认证信息（JSON格式，unionid/scope等）
+	UserID     uint      `gorm:"index;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"user_id"` // 关联用户ID
+	LoginType  LoginType `gorm:"size:32;index;not null;comment:'登录类型'" json:"login_type"`            // 登录类型
+	AuthKey    string    `gorm:"size:64;index;not null;comment:'认证标识'" json:"auth_key"`              // 认证标识（手机号/openid）
+	AuthSecret string    `gorm:"size:255;comment:'认证密钥'" json:"-"`                                   // 认证密钥（密码hash/验证码/session_key/token）
+	Extra      string    `gorm:"type:text;comment:'额外认证信息'" json:"-"`                                // 额外认证信息（JSON格式，unionid/scope等）
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
 

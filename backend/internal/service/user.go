@@ -1,10 +1,11 @@
 package service
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"gym/internal/model"
 	"gym/pkg/database"
-	"gym/pkg/utils"
 )
 
 // UserService 用户服务
@@ -36,9 +37,22 @@ func (s *UserService) ChangePassword(userID uint, oldPassword, newPassword strin
 		return err
 	}
 
-	if !utils.ValidatePassword(oldPassword, user.Password) {
+	if !s.validatePassword(oldPassword, user.Password) {
 		return errors.New("原密码错误")
 	}
 
-	return database.DB.Model(&user).Update("password", utils.EncryptPassword(newPassword)).Error
+	return database.DB.Model(&user).Update("password", s.encryptPassword(newPassword)).Error
+}
+
+// encryptPassword 密码加密
+func (s *UserService) encryptPassword(password string) string {
+	// 使用SHA256进行密码加密
+	hash := sha256.New()
+	hash.Write([]byte(password))
+	return hex.EncodeToString(hash.Sum(nil))
+}
+
+// validatePassword 验证密码
+func (s *UserService) validatePassword(password, hashedPassword string) bool {
+	return s.encryptPassword(password) == hashedPassword
 }
